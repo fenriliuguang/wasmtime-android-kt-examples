@@ -1,0 +1,2 @@
+sdk.dir=/path/to/Android/sdk
+wasmtime.android.kt.dir=/path/to/wasmtime-android-kt

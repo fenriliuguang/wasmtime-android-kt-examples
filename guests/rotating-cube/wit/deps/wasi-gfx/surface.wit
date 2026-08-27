@@ -1,0 +1,20 @@
+package wasi-gfx:surface@0.2.0;
+
+/// Subset that the wasmtime-android-kt product linker actually implements
+/// (constructor + on-frame). Extra pin methods (resize/pointer/keys) are not
+/// linked; importing them makes instantiate fail.
+interface surface {
+  record create-desc {
+    height: option<u32>,
+    width: option<u32>,
+  }
+
+  record frame-event {
+    nothing: bool,
+  }
+
+  resource surface {
+    constructor(desc: create-desc);
+    on-frame: func() -> stream<frame-event>;
+  }
+}

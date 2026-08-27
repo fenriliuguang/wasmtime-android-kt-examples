@@ -1,0 +1,24 @@
+.idea/
+*.iml
+.gradle/
+build/
+**/bin/
+local.properties
+.DS_Store
+*.apk
+*.aab
+captures/
+.cxx/
+*.class
+*.jar
+!**/gradle/wrapper/gradle-wrapper.jar
+
+# MoonBit
+**/.moon/
+**/_build/
+**/target/
+moon-errors.txt
+moon-build.log
+
+# Hosts copy the selected guest into assets at preBuild.
+hosts/**/src/main/assets/guest.wasm
