@@ -1,6 +1,7 @@
 package io.github.fenriliuguang.wasmtime.android.examples.fullscreen
 
 import android.app.Activity
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
@@ -37,6 +38,11 @@ class MainActivity : Activity(), SurfaceHolder.Callback, Choreographer.FrameCall
     private val storeRef = AtomicReference<Store?>(null)
     private val guestStarted = AtomicBoolean(false)
     private var statusView: TextView? = null
+    private var lastDoFrameNs = 0L
+    private var vsyncSamples = 0
+    private var vsyncLt11 = 0
+    private var vsyncMid = 0
+    private var vsyncGt20 = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +50,13 @@ class MainActivity : Activity(), SurfaceHolder.Callback, Choreographer.FrameCall
         setContentView(R.layout.activity_main)
         statusView = findViewById(R.id.status)
         val surfaceView = findViewById<SurfaceView>(R.id.guest_surface)
+        if (Build.VERSION.SDK_INT >= 30) {
+            val peakHz = display?.supportedModes
+                ?.maxByOrNull { it.refreshRate }
+                ?.refreshRate
+                ?: 120f
+            surfaceView.setRequestedFrameRate(peakHz)
+        }
         surfaceView.holder.addCallback(this)
     }
 
@@ -57,6 +70,7 @@ class MainActivity : Activity(), SurfaceHolder.Callback, Choreographer.FrameCall
         if (!guestStarted.compareAndSet(false, true)) {
             return
         }
+        preferDisplayRefresh(surface)
         gpuHandler.post { runGuest(surface, width, height) }
     }
 
@@ -66,6 +80,27 @@ class MainActivity : Activity(), SurfaceHolder.Callback, Choreographer.FrameCall
     }
 
     override fun doFrame(frameTimeNanos: Long) {
+        val prev = lastDoFrameNs
+        lastDoFrameNs = frameTimeNanos
+        if (prev != 0L) {
+            val dt = frameTimeNanos - prev
+            vsyncSamples++
+            when {
+                dt < 11_000_000L -> vsyncLt11++
+                dt <= 20_000_000L -> vsyncMid++
+                else -> vsyncGt20++
+            }
+            if (vsyncSamples % 120 == 0) {
+                val disp = display
+                Log.i(
+                    TAG,
+                    "choreographer n=$vsyncSamples <11ms=$vsyncLt11 " +
+                        "11-20ms=$vsyncMid >20ms=$vsyncGt20 lastDtNs=$dt " +
+                        "dispHz=${disp?.refreshRate} modeHz=${disp?.mode?.refreshRate} " +
+                        "modeId=${disp?.mode?.modeId}",
+                )
+            }
+        }
         storeRef.get()?.postGfxVsync(frameTimeNanos)
         if (storeRef.get() != null) {
             Choreographer.getInstance().postFrameCallback(this)
@@ -134,10 +169,57 @@ class MainActivity : Activity(), SurfaceHolder.Callback, Choreographer.FrameCall
         }
     }
 
+    private fun preferDisplayRefresh(surface: Surface) {
+        if (Build.VERSION.SDK_INT < 30) {
+            return
+        }
+        val disp = display ?: return
+        val current = disp.mode
+        val sameSize = disp.supportedModes.filter { mode ->
+            current == null ||
+                (mode.physicalWidth == current.physicalWidth &&
+                    mode.physicalHeight == current.physicalHeight)
+        }
+        // Every physical mode on V2458A lists 60/90/120 alternatives. Pinning
+        // a 60 Hz mode still fights DisplayManager's 0–120 desire and RMS
+        // (H27: ~5 s BLAST rewind). Match the peak of this size instead.
+        val mode = sameSize.maxByOrNull { it.refreshRate }
+            ?: disp.supportedModes.maxByOrNull { it.refreshRate }
+        val hz = mode?.refreshRate ?: disp.refreshRate
+        if (hz <= 0f) {
+            return
+        }
+        if (mode != null) {
+            val params = window.attributes
+            params.preferredDisplayModeId = mode.modeId
+            params.preferredRefreshRate = hz
+            window.attributes = params
+        }
+        if (Build.VERSION.SDK_INT >= 31) {
+            window.setPreferMinimalPostProcessing(true)
+            surface.setFrameRate(
+                hz,
+                Surface.FRAME_RATE_COMPATIBILITY_FIXED_SOURCE,
+                Surface.CHANGE_FRAME_RATE_ONLY_IF_SEAMLESS,
+            )
+        } else {
+            surface.setFrameRate(hz, Surface.FRAME_RATE_COMPATIBILITY_FIXED_SOURCE)
+        }
+        Log.i(
+            TAG,
+            "Surface.setFrameRate($hz, ONLY_IF_SEAMLESS) displayPeak=$hz " +
+                "current=${disp.refreshRate} modeId=${mode?.modeId} " +
+                "modeHz=${mode?.refreshRate} sdk=${Build.VERSION.SDK_INT}",
+        )
+    }
+
     private fun enterFullscreen() {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         @Suppress("DEPRECATION")
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        if (Build.VERSION.SDK_INT >= 31) {
+            window.setPreferMinimalPostProcessing(true)
+        }
     }
 
     companion object {

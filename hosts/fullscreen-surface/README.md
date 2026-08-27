@@ -23,3 +23,5 @@ Another guest:
 
 - **GpuThread:** `DawnWasiWebGpuHost.bindCanvasNativeWindow`, compile/instantiate, `callRunConcurrent`.
 - **Main:** Surface callbacks + Choreographer `postGfxVsync` (1-slot; drops unconsumed beats).
+
+On API 30+ the host pins the **peak** display mode for this resolution and `Surface.setFrameRate` at that Hz (H24/H27). API 31+ also `Window.setPreferMinimalPostProcessing`. Logcat tags: `FullscreenSurface` (Choreographer interval histogram every 120 beats) and runtime `GfxHitch` (acquire ns / 60 vs 120 Hz buckets).
