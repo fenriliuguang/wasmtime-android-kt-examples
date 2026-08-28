@@ -4,6 +4,7 @@
 build/
 **/bin/
 local.properties
+**/gradle-daemon-jvm.properties
 .DS_Store
 *.apk
 *.aab

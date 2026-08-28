@@ -76,6 +76,44 @@ anonymous class).
 4. Record the result in §Results here and update wasmtime-android-kt checklist
    C7 / issue #297.
 
+## Results
+
+Reproduced on **V2458A** (PD2415M, Android 14 / SDK 36, Mali mt6991) at 120 Hz
+with `hosts/native-webgpu` (pure `androidx.webgpu:webgpu:1.0.0-alpha05`, no
+Wasmtime, no `host-dawn`).
+
+- Overflow at **~25,312 frames** (~3.5 min @ 120 Hz): `Fatal signal 6
+  (SIGABRT)` on `GpuThread`, abort message
+  `JNI ERROR (app bug): global reference table overflow (max=51200)`.
+- Global-ref dump summary (exactly the predicted 2-object signature):
+
+```
+  25313 of ...MainActivity$$ExternalSyntheticLambda2 (1 unique instances)
+  25312 of ...MainActivity$renderFrame$1 (25312 unique instances)
+```
+
+  `ExternalSyntheticLambda2` is the single shared `Executor(Runnable::run)`
+  (compiler-generated lambda index; varies with source); `renderFrame$1` is the
+  fresh per-frame `GPURequestCallback<Unit>`. 2 refs/frame.
+
+### Conclusion
+
+| Criterion | Result |
+|-----------|--------|
+| Overflow at ~25k frames with the same 2-object dump | **Leak is upstream; `host-dawn` is not the cause** |
+
+The `onSubmittedWorkDone` JNI `NewGlobalRef` leak is in the androidx.webgpu
+layer, independent of Wasmtime / `host-dawn`.
+
+### Implementation note
+
+`GPUInstance.processEvents()` must not run concurrently with GpuThread GPU
+calls: a separate poller thread racing `submit` SIGSEGV'd on Mali
+(`fault addr 0x8` in `Java_androidx_webgpu_GPUQueue_submit`) — the same race
+`host-dawn` serializes with `gpuLock`. The repro pumps `processEvents()` inline
+on GpuThread only during adapter/device setup, and never during the frame loop
+(the leak is a `NewGlobalRef` at registration time, not at callback delivery).
+
 ## Status
 
-Planned — not yet implemented.
+Done — leak confirmed upstream (androidx.webgpu). See §Results.

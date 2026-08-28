@@ -15,3 +15,4 @@ Local JDK: Android Studio JBR (`JAVA_HOME` pointing at `Android Studio/jbr`). Th
 | Host | Notes |
 |------|--------|
 | [fullscreen-surface](fullscreen-surface) | Fullscreen Surface for guest rendering |
+| [native-webgpu](native-webgpu) | Minimal pure-`androidx.webgpu` repro of the `onSubmittedWorkDone` JNI global-ref leak (upstream issue repro; no Wasmtime) |
