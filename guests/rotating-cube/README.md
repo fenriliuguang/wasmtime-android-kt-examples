@@ -1,6 +1,6 @@
 # rotating-cube
 
-MoonBit guest: a continuously rotating colorful cube using **`wasi:webgpu`** and **`wasi-gfx`**.
+MoonBit guest: a colorful cube with **perspective** tumble on **X / Y / Z** (`wasi:webgpu` + `wasi-gfx`). Rotation uses Cody–Waite + fdlibm `sincos` in `math.mbt` (MoonBit has no libc trig). Why, and what broke: [`docs/moonbit-guest-math.md`](../../docs/moonbit-guest-math.md). The Android cube launcher hides the VRI stopwatch.
 
 Requires:
 
@@ -41,7 +41,9 @@ Produces `dist/guest.wasm` (Wasm component, UTF-16 ABI from MoonBit). That file 
 
 **Cause (wasmtime-android-kt, not this guest):** the product canvas path (`gpu-canvas-context.get-current-texture`) inserted a new Dawn `HandleTable` `GPUTexture` every frame. `queue.submit` / `context.present` **presented** but did **not** close/drop that texture (or views created from it). Track A `surfaceGetCurrentTextureView` already recycled View↔Texture pairs so Dawn could return the BLAST image. The product WIT path did not. Mali then held more and more swapchain images → waits/hitches → use of a null native object (`0x20`). Guest `resource.drop` never reached Dawn either (CM dtor only removed the Wasmtime table entry).
 
-A later hitch + **fast spin at launch** was vsync alignment: this guest used `angle += const` per consumed `on-frame` beat. Pin `frame-event` has no timestamp. Rotation now uses `wasi:clocks/monotonic-clock#now` delta. V2458A Choreographer is 120 Hz. The runtime does **not** cap `postGfxVsync` at 60 Hz (that caused every-other-beat jitter). Remaining visual hitch: runtime `docs/mapping/gfx-hitch-checklist.md`.
+A later hitch + **fast spin at launch** was vsync alignment: this guest used `angle += const` per consumed `on-frame` beat. Pin `frame-event` has no timestamp. Position now uses `wasi:clocks/monotonic-clock#now` delta (same clock as the old rotation). V2458A Choreographer is 120 Hz. The runtime does **not** cap `postGfxVsync` at 60 Hz (that caused every-other-beat jitter).
+
+The ~5 s eye pop after that was **this guest’s trig**, not host present. See [`docs/moonbit-guest-math.md`](../../docs/moonbit-guest-math.md).
 
 **Fix so far:** (1) runtime recycles canvas textures after GPU work of the oldest in-flight frame (keep 3), without waiting that fence on the vsync→present path. (2) Guest must `drop()` per-frame WIT resources. See runtime `docs/mapping/gap-webgpu-wit-androidx.md` §5.
 

@@ -1,4 +1,5 @@
-/// Column-major 4×4 helpers for the rotating-cube MVP uniform.
+/// Column-major 4×4 MVP helpers. `sincos_d` is guest-owned (MoonBit has no
+/// libc sin/cos). Notes: docs/moonbit-guest-math.md.
 
 fn f32_bytes(buf : FixedArray[Byte], offset : Int, value : Float) -> Unit {
   let bits = value.reinterpret_as_uint()
@@ -42,32 +43,67 @@ fn mat4_write(buf : FixedArray[Byte], m : FixedArray[Double]) -> Unit {
   }
 }
 
-fn wrap_pi(x : Double) -> Double {
-  let pi = 3.141592653589793
-  let two_pi = 6.283185307179586
-  let mut y = x
-  while y > pi {
-    y = y - two_pi
+fn round_nearest_int(x : Double) -> Int {
+  if x >= 0.0 {
+    (x + 0.5).to_int()
+  } else {
+    (x - 0.5).to_int()
   }
-  while y < -pi {
-    y = y + two_pi
-  }
-  y
 }
 
-fn sin_d(x : Double) -> Double {
-  let y = wrap_pi(x)
-  let y2 = y * y
-  y * (1.0 + y2 * (-1.0 / 6.0 + y2 * (1.0 / 120.0 + y2 * (-1.0 / 5040.0))))
+fn kernel_sin(x : Double) -> Double {
+  // fdlibm k_sin on |x| ≤ π/4
+  let z = x * x
+  let s1 = -0.16666666666666632
+  let s2 = 0.008333333333322489
+  let s3 = -0.0001984126982985795
+  let s4 = 0.000002755731370707007
+  let s5 = -0.00000002505076025340686
+  let s6 = 0.000000000158969099521155
+  let r = z * (s1 + z * (s2 + z * (s3 + z * (s4 + z * (s5 + z * s6)))))
+  x + x * r
 }
 
-fn cos_d(x : Double) -> Double {
-  sin_d(x + 1.5707963267948966)
+fn kernel_cos(x : Double) -> Double {
+  // fdlibm k_cos on |x| ≤ π/4
+  let z = x * x
+  let c1 = 0.0416666666666666
+  let c2 = -0.001388888888887411
+  let c3 = 0.00002480158728947673
+  let c4 = -0.0000002755731435139066
+  let c5 = 0.000000002087572321298175
+  let c6 = -0.00000000001135964755778819
+  1.0 - 0.5 * z + z * z * (c1 + z * (c2 + z * (c3 + z * (c4 + z * (c5 + z * c6)))))
+}
+
+/// Cody–Waite reduction to |r| ≤ π/4, then fdlibm kernels. sin/cos share
+/// one (n, r) so the pair stays continuous at ±π/2 and ±π.
+fn sincos_d(x : Double) -> (Double, Double) {
+  let invpio2 = 0.6366197723675814
+  let pio2_1 = 1.5707963267341256
+  let pio2_1t = 6.077100506506192e-11
+  let n = round_nearest_int(x * invpio2)
+  let nf = n.to_double()
+  let r = x - nf * pio2_1 - nf * pio2_1t
+  let s0 = kernel_sin(r)
+  let c0 = kernel_cos(r)
+  let mut q = n % 4
+  if q < 0 {
+    q = q + 4
+  }
+  if q == 0 {
+    (s0, c0)
+  } else if q == 1 {
+    (c0, -s0)
+  } else if q == 2 {
+    (-s0, -c0)
+  } else {
+    (-c0, s0)
+  }
 }
 
 fn mat4_rotate_x(radians : Double) -> FixedArray[Double] {
-  let c = cos_d(radians)
-  let s = sin_d(radians)
+  let (s, c) = sincos_d(radians)
   let m = mat4_identity()
   m[5] = c
   m[6] = s
@@ -77,8 +113,7 @@ fn mat4_rotate_x(radians : Double) -> FixedArray[Double] {
 }
 
 fn mat4_rotate_y(radians : Double) -> FixedArray[Double] {
-  let c = cos_d(radians)
-  let s = sin_d(radians)
+  let (s, c) = sincos_d(radians)
   let m = mat4_identity()
   m[0] = c
   m[2] = -s
@@ -87,13 +122,23 @@ fn mat4_rotate_y(radians : Double) -> FixedArray[Double] {
   m
 }
 
+fn mat4_rotate_z(radians : Double) -> FixedArray[Double] {
+  let (s, c) = sincos_d(radians)
+  let m = mat4_identity()
+  m[0] = c
+  m[1] = s
+  m[4] = -s
+  m[5] = c
+  m
+}
+
 fn tan_half(fov_y : Double) -> Double {
   let half = fov_y * 0.5
-  let s = sin_d(half)
+  let (s, c) = sincos_d(half)
   if s == 0.0 {
     1.0
   } else {
-    sin_d(half) / cos_d(half)
+    s / c
   }
 }
 
@@ -154,8 +199,13 @@ fn mat4_look_at(
   m
 }
 
+/// Perspective tumble on X/Y/Z from one clock angle. Do **not** fold `angle`
+/// into ±π: Ry(θ+2π)=Ry(θ), but Rx(0.35(θ+2π)) is a ~126° snap.
 fn mvp_bytes(angle : Double, aspect : Double) -> FixedArray[Byte] {
-  let model = mat4_mul(mat4_rotate_y(angle), mat4_rotate_x(angle * 0.35))
+  let rx = mat4_rotate_x(angle * 0.35)
+  let ry = mat4_rotate_y(angle)
+  let rz = mat4_rotate_z(angle * 0.21)
+  let model = mat4_mul(rz, mat4_mul(ry, rx))
   let view = mat4_look_at(0.0, 1.35, 3.6, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
   let proj = mat4_perspective(0.7853981633974483, aspect, 0.1, 100.0)
   let mvp = mat4_mul(proj, mat4_mul(view, model))

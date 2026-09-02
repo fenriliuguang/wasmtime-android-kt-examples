@@ -1,7 +1,7 @@
 [versions]
 agp = "9.3.1"
 coreKtx = "1.10.1"
-wasmtimeAndroid = "0.1.0"
+wasmtimeAndroid = "0.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

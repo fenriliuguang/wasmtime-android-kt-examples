@@ -8,6 +8,47 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <!-- VRI overlay (not the guest SurfaceView BLAST). Off for the cube so
+         color-ratio capture is only guest pixels. -->
+    <LinearLayout
+        android:id="@+id/hitch_overlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="36dp"
+        android:background="#99000000"
+        android:clickable="false"
+        android:elevation="12dp"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp">
+
+        <TextView
+            android:id="@+id/stopwatch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:includeFontPadding="false"
+            android:minEms="8"
+            android:text="@string/stopwatch_zero"
+            android:textColor="#FFFFFFFF"
+            android:textSize="42sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/vsync_dt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="monospace"
+            android:includeFontPadding="false"
+            android:text="@string/vsync_dt_placeholder"
+            android:textColor="#FFB0BEC5"
+            android:textSize="16sp" />
+    </LinearLayout>
+
     <TextView
         android:id="@+id/status"
         android:layout_width="match_parent"

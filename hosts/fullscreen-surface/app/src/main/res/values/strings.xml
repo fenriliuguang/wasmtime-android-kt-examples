@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">fullscreen-surface</string>
+    <string name="activity_cube">fullscreen-cube</string>
+    <string name="activity_border_2d">fullscreen-2d</string>
+    <string name="stopwatch_zero">0.000</string>
+    <string name="vsync_dt_placeholder">vsync —</string>
 </resources>

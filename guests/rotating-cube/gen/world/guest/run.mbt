@@ -1,4 +1,4 @@
-/// Rotating colorful cube: `wasi:webgpu` + `wasi-gfx` `on-frame` loop.
+/// Colorful cube: perspective tumble (X/Y/Z), `sincos_d` rotation.
 
 const SHADER : String =
   #|struct Uniforms { mvp : mat4x4<f32> }
@@ -226,7 +226,7 @@ pub async fn run(background_group : @async-core.TaskGroup[Unit]) -> UInt {
   )
   let frames = surface.on_frame()
   let mut aspect = 1.0
-  // ~0.025 rad/tick at 60 Hz. Delta from clocks.now, not per-event (rAF model).
+  // Same as the original hitch cube: ~0.025 rad per 60 Hz tick, from clocks.now.
   let rad_per_sec = 0.025 * 60.0
   let presented = for presented = 0U, angle = 0.0, last_ns = 0UL {
     match frames.read(1) {
@@ -240,8 +240,12 @@ pub async fn run(background_group : @async-core.TaskGroup[Unit]) -> UInt {
         let color_tex = ctx.get_current_texture()
         let tw = color_tex.width()
         let th = color_tex.height()
-        if th != 0U {
-          aspect = tw.reinterpret_as_int().to_double() / th.reinterpret_as_int().to_double()
+        // NativeGpu stubs gpu-texture.width/height to 1. V2458A hitch window
+        // is 1260×2800; without a real aspect the ortho cube stretches.
+        aspect = if tw > 1U && th > 1U {
+          tw.reinterpret_as_int().to_double() / th.reinterpret_as_int().to_double()
+        } else {
+          1260.0 / 2800.0
         }
         ignore(
           queue.write_buffer_with_copy(

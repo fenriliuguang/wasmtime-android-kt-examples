@@ -9,6 +9,7 @@ Out-of-tree demos for [wasmtime-android-kt](https://github.com/fenriliuguang/was
 ```
 hosts/     Android host apps (Surface, later other shells)
 guests/    Wasm component guests (any language that can target the contract)
+docs/      Guest-side notes (MoonBit trig, androidx leak report)
 ```
 
 Any host can pair with any guest. Hosts load `assets/guest.wasm`. Override the guest when assembling the APK:
@@ -36,8 +37,9 @@ A CLI-only guest that just returns from `run` can still be loaded by a Surface h
 
 | Role | Example | What it does |
 |------|---------|----------------|
-| Host | [`hosts/fullscreen-surface`](hosts/fullscreen-surface) | Fullscreen `SurfaceView`; Dawn + Choreographer vsync on GpuThread |
-| Guest | [`guests/rotating-cube`](guests/rotating-cube) | MoonBit colorful rotating cube (`wasi:webgpu` + `wasi-gfx`) |
+| Host | [`hosts/fullscreen-surface`](hosts/fullscreen-surface) | Fullscreen `SurfaceView`; NativeGpu + Choreographer vsync on GpuThread |
+| Guest | [`guests/rotating-cube`](guests/rotating-cube) | MoonBit translating cube + ticks (`wasi:webgpu` + `wasi-gfx`) |
+| Guest | [`guests/boundary-2d`](guests/boundary-2d) | MoonBit 2D square looping the screen border |
 
 ## Runtime dependency
 
@@ -50,7 +52,7 @@ wasmtime.android.kt.dir=C:/path/to/wasmtime-android-kt
 
 Native `libwasmtime_android_kt.so` must already exist under that checkout’s `android/jniLibs/` (see the runtime `scripts/build-native-android.ps1`).
 
-Coordinate: `io.github.fenriliuguang.wasmtime.android:android-webgpu:0.1.0`.
+Coordinate: `io.github.fenriliuguang.wasmtime.android:android-webgpu:0.2.0` (`GpuBackends.dawn()` = NativeGpu).
 
 ## License
 

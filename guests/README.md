@@ -18,4 +18,5 @@ Commit `dist/guest.wasm` so a host can install without the guest toolchain.
 
 | Guest | Language | Notes |
 |-------|----------|--------|
-| [rotating-cube](rotating-cube) | MoonBit | Colorful cube, vsync-paced |
+| [rotating-cube](rotating-cube) | MoonBit | Perspective X/Y/Z tumble; own `sincos` ([trig notes](../docs/moonbit-guest-math.md)) |
+| [boundary-2d](boundary-2d) | MoonBit | 2D square looping the screen border; same guest `sincos` |

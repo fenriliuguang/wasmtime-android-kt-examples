@@ -1,0 +1,9 @@
+﻿package example:rotating-cube@0.1.0;
+
+world guest {
+  import wasi:webgpu/webgpu@0.3.0-rc.2;
+  import wasi-gfx:surface/surface@0.2.0;
+  import wasi-gfx:surface/surface-webgpu@0.2.0;
+  import wasi:clocks/monotonic-clock@0.3.0;
+  export run: async func() -> u32;
+}

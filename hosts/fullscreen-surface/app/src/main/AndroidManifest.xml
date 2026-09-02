@@ -10,6 +10,19 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:label="@string/activity_cube"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="unspecified"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Border2dActivity"
+            android:exported="true"
+            android:label="@string/activity_border_2d"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="unspecified"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen">

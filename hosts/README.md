@@ -3,7 +3,7 @@
 Android shells that load `assets/guest.wasm` and drive the product runtime:
 
 1. `Engine.create` → `Component.compile` → `Linker.create` (product linker, no fixture `get-device`)
-2. `Store.create` + explicit `setWebGpuBackend(HostWebGpuBackend(...))`
+2. `Store.create` + explicit `setWebGpuBackend(GpuBackends.dawn())` (NativeGpu) + `Store.bindCanvasNativeWindow`
 3. `Instance.callRunConcurrent(store)` on **GpuThread**
 4. UI thread: Surface lifecycle + `Choreographer` → `store.postGfxVsync()`
 5. `surfaceDestroyed` → `store.closeGfxOnFrame()` so guest `run` unblocks
@@ -14,5 +14,5 @@ Local JDK: Android Studio JBR (`JAVA_HOME` pointing at `Android Studio/jbr`). Th
 
 | Host | Notes |
 |------|--------|
-| [fullscreen-surface](fullscreen-surface) | Fullscreen Surface for guest rendering |
+| [fullscreen-surface](fullscreen-surface) | Fullscreen Surface; launcher **fullscreen-cube** (translate) and **fullscreen-2d** (border loop) |
 | [native-webgpu](native-webgpu) | Minimal pure-`androidx.webgpu` repro of the `onSubmittedWorkDone` JNI global-ref leak (upstream issue repro; no Wasmtime) |

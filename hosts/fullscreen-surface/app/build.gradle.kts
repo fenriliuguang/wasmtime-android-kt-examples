@@ -5,6 +5,9 @@ plugins {
 val guestWasmPath = providers.gradleProperty("guest.wasm").orElse(
     rootProject.layout.projectDirectory.file("../../guests/rotating-cube/dist/guest.wasm").asFile.absolutePath,
 )
+val border2dWasmPath = providers.gradleProperty("border2d.wasm").orElse(
+    rootProject.layout.projectDirectory.file("../../guests/boundary-2d/dist/guest.wasm").asFile.absolutePath,
+)
 
 val copyGuestWasm = tasks.register<Copy>("copyGuestWasm") {
     val src = rootProject.file(guestWasmPath.get())
@@ -14,8 +17,16 @@ val copyGuestWasm = tasks.register<Copy>("copyGuestWasm") {
     into(layout.projectDirectory.dir("src/main/assets"))
 }
 
+val copyBorder2dWasm = tasks.register<Copy>("copyBorder2dWasm") {
+    val src = rootProject.file(border2dWasmPath.get())
+    onlyIf { src.isFile }
+    from(src)
+    rename { "border2d.wasm" }
+    into(layout.projectDirectory.dir("src/main/assets"))
+}
+
 tasks.named("preBuild").configure {
-    dependsOn(copyGuestWasm)
+    dependsOn(copyGuestWasm, copyBorder2dWasm)
 }
 
 android {
@@ -54,6 +65,8 @@ android {
     packaging {
         jniLibs {
             useLegacyPackaging = true
+            // ND-DEFAULT: NativeGpu is the product Dawn. Do not pack androidx leftover.
+            excludes += "**/libwebgpu_c_bundled.so"
         }
     }
 }
