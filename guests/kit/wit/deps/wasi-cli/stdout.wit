@@ -1,0 +1,12 @@
+package wasi:cli@0.3.0;
+
+interface stdout {
+  enum error-code {
+    unknown,
+    io,
+    illegal-byte-sequence,
+    pipe,
+  }
+
+  write-via-stream: func(data: stream<u8>) -> future<result<_, error-code>>;
+}

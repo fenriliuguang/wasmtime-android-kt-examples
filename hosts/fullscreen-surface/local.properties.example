@@ -1,2 +1,4 @@
 sdk.dir=/path/to/Android/sdk
-wasmtime.android.kt.dir=/path/to/wasmtime-android-kt
+# Hosts consume Maven Central android-webgpu:0.1.2. A local runtime checkout
+# is not required. To override with includeBuild, restore settings.gradle.kts
+# and set wasmtime.android.kt.dir here.

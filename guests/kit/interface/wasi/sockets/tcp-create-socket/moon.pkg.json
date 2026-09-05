@@ -1,0 +1,7 @@
+{
+  "warn-list": "-44",
+  "import": [
+    { "path" : "example/kit/interface/wasi/sockets/tcp", "alias" : "tcp" }
+  ],
+  "supported-targets": "+wasm"
+}

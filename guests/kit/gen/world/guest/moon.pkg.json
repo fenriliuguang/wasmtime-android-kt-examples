@@ -1,0 +1,16 @@
+{
+  "warn-list": "-44-1-2-3-6-7-8-9-10-11-12-13-14-15-16-17-18-19-20-21-22-23-24-25-26-27-28-29-30-31-32-33-34-35-36-37-38-39-40-41-42-43-45-46-47-48-49",
+  "import": [
+    { "path": "example/kit/async-core", "alias": "async-core" },
+    { "path": "example/kit/interface/wasi/webgpu/webgpu", "alias": "webgpu" },
+    { "path": "example/kit/interface/wasi-gfx/surface/surface", "alias": "surface" },
+    { "path": "example/kit/interface/wasi-gfx/surface/surface-webgpu", "alias": "sw" },
+    { "path": "example/kit/interface/wasi/clocks/monotonic-clock", "alias": "clocks" },
+    { "path": "example/kit/interface/wasi/cli/stdout", "alias": "stdout" },
+    { "path": "example/kit/interface/wasi/filesystem/types", "alias": "fs" },
+    { "path": "example/kit/interface/wasi/filesystem/preopens", "alias": "preopens" },
+    { "path": "example/kit/interface/wasi/sockets/tcp", "alias": "tcp" },
+    { "path": "example/kit/interface/wasi/sockets/tcp-create-socket", "alias": "create" }
+  ],
+  "supported-targets": "+wasm"
+}

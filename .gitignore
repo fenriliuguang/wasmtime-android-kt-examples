@@ -21,6 +21,5 @@ captures/
 moon-errors.txt
 moon-build.log
 
-# Hosts copy the selected guest into assets at preBuild.
 hosts/**/src/main/assets/guest.wasm
 hosts/**/src/main/assets/border2d.wasm

@@ -1,0 +1,22 @@
+package wasi:http@0.3.0;
+
+interface types {
+  enum error-code {
+    unknown,
+  }
+
+  resource request {
+    constructor();
+    set-authority: func(authority: string) -> result<_, error-code>;
+  }
+
+  resource response {
+    status-code: func() -> u16;
+    consume-body: static func(this: response) -> tuple<stream<u8>, future<result<_, error-code>>>;
+  }
+}
+
+interface client {
+  use types.{request, response, error-code};
+  send: async func(request: request) -> result<response, error-code>;
+}

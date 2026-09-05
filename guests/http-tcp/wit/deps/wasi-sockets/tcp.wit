@@ -1,0 +1,39 @@
+package wasi:sockets@0.3.0;
+
+interface tcp {
+  enum error-code {
+    unknown,
+  }
+
+  type ipv4-address = tuple<u8, u8, u8, u8>;
+
+  record ipv4-socket-address {
+    port: u16,
+    address: ipv4-address,
+  }
+
+  variant ip-socket-address {
+    ipv4(ipv4-socket-address),
+  }
+
+  resource tcp-socket {
+    connect: async func(remote-address: ip-socket-address) -> result<_, error-code>;
+    write-via-stream: func(data: stream<u8>) -> future<result<_, error-code>>;
+    read-via-stream: func() -> tuple<stream<u8>, future<result<_, error-code>>>;
+  }
+}
+
+interface tcp-create-socket {
+  use tcp.{tcp-socket};
+
+  enum error-code {
+    unknown,
+  }
+
+  enum ip-address-family {
+    ipv4,
+    ipv6,
+  }
+
+  create-tcp-socket: func(address-family: ip-address-family) -> result<tcp-socket, error-code>;
+}

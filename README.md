@@ -1,58 +1,43 @@
 # wasmtime-android-kt-examples
 
-Out-of-tree demos for [wasmtime-android-kt](https://github.com/fenriliuguang/wasmtime-android-kt) (`0.1.0` product subset). This repo is the P010-DEMO linked example: **guest wasm → Android runtime → present**.
+Out-of-tree **scriptable** demos for [wasmtime-android-kt](https://github.com/fenriliuguang/wasmtime-android-kt) **0.1.2**. This is the P010-DEMO linked example repo, not a product. `:smoke-app` in the runtime stays instruments.
 
-`:smoke-app` in the runtime repo is instruments, not this demo.
+Hosts consume Maven Central (no local `includeBuild`):
+
+```kotlin
+implementation("io.github.fenriliuguang.wasmtime.android:android-webgpu:0.1.2")
+```
+
+Plan / playbook: [`docs/012-examples-plan.md`](docs/012-examples-plan.md), [`docs/012-examples-playbook.md`](docs/012-examples-playbook.md).
 
 ## Layout
 
 ```
-hosts/     Android host apps (Surface, later other shells)
-guests/    Wasm component guests (any language that can target the contract)
-docs/      Guest-side notes (MoonBit trig, androidx leak report)
+hosts/fullscreen-surface   Surface host; one launcher per -Pexample
+guests/kit                 0.1.2 product-world MoonBit scenarios
+guests/http-tcp            HTTP GET (fixture request ctor) + TCP
+guests/rotating-cube       original present demo
+guests/boundary-2d         original 2D demo
+scripts/                   build-example / play-example
+docs/                      0.1.2 plan + playbook
 ```
 
-Any host can pair with any guest. Hosts load `assets/guest.wasm`. Override the guest when assembling the APK:
+## One example per install
 
-```powershell
-cd hosts/fullscreen-surface
-.\gradlew.bat :app:installDebug "-Pguest.wasm=D:\path\to\other-guest\dist\guest.wasm"
+```bash
+./scripts/build-example.sh compute --install
+./scripts/play-example.sh compute 30
 ```
 
-Default guest for `fullscreen-surface` is `guests/rotating-cube/dist/guest.wasm`.
+`-Pexample` values: `cube` `border2d` `compute` `texture` `pointer` `cli` `fs` `tcp` `http-tcp`. Each APK has a **single** LAUNCHER and a distinct `applicationId`. Do not pack every guest into one install.
+
+Needle in logcat: `EXAMPLE_OK example=<name> code=<u32>`.
 
 ## Guest contract
 
-Guests should:
+Export `run: async func() -> u32`. Host calls `Instance.callRunConcurrent`. Kit guests share one generated WIT binding tree (full product pin). HTTP GET is a second tree because product `Linker.create` omits `[constructor]request`.
 
-1. Export `run: async func() -> u32` (host calls `Instance.callRunConcurrent`).
-2. Import only what they need. The first cube guest uses:
-   - `wasi:webgpu/webgpu@0.3.0-rc.2`
-   - `wasi-gfx:surface/surface@0.2.0`
-   - `wasi-gfx:surface/surface-webgpu@0.2.0`
-
-A CLI-only guest that just returns from `run` can still be loaded by a Surface host (the GPU/vsync wiring stays unused).
-
-## First pair
-
-| Role | Example | What it does |
-|------|---------|----------------|
-| Host | [`hosts/fullscreen-surface`](hosts/fullscreen-surface) | Fullscreen `SurfaceView`; NativeGpu + Choreographer vsync on GpuThread |
-| Guest | [`guests/rotating-cube`](guests/rotating-cube) | MoonBit translating cube + ticks (`wasi:webgpu` + `wasi-gfx`) |
-| Guest | [`guests/boundary-2d`](guests/boundary-2d) | MoonBit 2D square looping the screen border |
-
-## Runtime dependency
-
-Hosts `includeBuild` a local **wasmtime-android-kt** checkout (Maven Central may not have a press yet). Set in `hosts/*/local.properties`:
-
-```
-sdk.dir=...
-wasmtime.android.kt.dir=C:/path/to/wasmtime-android-kt
-```
-
-Native `libwasmtime_android_kt.so` must already exist under that checkout’s `android/jniLibs/` (see the runtime `scripts/build-native-android.ps1`).
-
-Coordinate: `io.github.fenriliuguang.wasmtime.android:android-webgpu:0.2.0` (`GpuBackends.dawn()` = NativeGpu).
+MoonBit `derive(Show)` warnings from wit-bindgen are ignored.
 
 ## License
 

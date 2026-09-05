@@ -1,27 +1,37 @@
 # fullscreen-surface
 
-Fullscreen `SurfaceView` host. Draws whatever the loaded guest presents through `wasi-gfx` + `wasi:webgpu`.
+Fullscreen `SurfaceView` host. Consumes **Maven** `android-webgpu:0.1.2` (Dawn NativeGpu packed in the AAR). One guest wasm + one launcher per install.
 
 ## Run
 
-1. Point `local.properties` at the Android SDK and a **wasmtime-android-kt** checkout (see `local.properties.example`).
-2. Ensure that checkout has `android/jniLibs/**/libwasmtime_android_kt.so`.
-3. Guests: `guests/rotating-cube/dist/guest.wasm` → `assets/guest.wasm` (launcher **fullscreen-cube**, no VRI overlay); `guests/boundary-2d/dist/guest.wasm` → `assets/border2d.wasm` (launcher **fullscreen-2d**, millisecond stopwatch on View / VRI). Rebuild each guest with its `build.ps1` if you change MoonBit sources.
+`local.properties` only needs the Android SDK:
+
+```
+sdk.dir=/path/to/Android/sdk
+```
+
+```bash
+# from repo root
+./scripts/build-example.sh compute --install
+./scripts/play-example.sh compute 30
+```
+
+Or:
 
 ```powershell
 cd hosts/fullscreen-surface
-.\gradlew.bat :app:installDebug
+.\gradlew.bat :app:installDebug "-Pexample=compute"
 ```
 
-Another guest:
+`-Pexample` (default `cube`): `cube` `border2d` `compute` `texture` `pointer` `cli` `fs` `tcp` `http-tcp`.
 
-```powershell
-.\gradlew.bat :app:installDebug "-Pguest.wasm=..\..\guests\other\dist\guest.wasm"
-```
+Needle: logcat `EXAMPLE_OK example=<name> code=<u32>`. Playbook: [`docs/012-examples-playbook.md`](../../docs/012-examples-playbook.md).
+
+`http-tcp` uses `Linker.createWithFixtureConstructors` (guest imports HTTP request ctor). Other examples use product `Linker.create`.
 
 ## Threads
 
-- **GpuThread:** `GpuBackends.dawn()` (NativeGpu) + `Store.bindCanvasNativeWindow`, compile/instantiate, `callRunConcurrent`.
-- **Main:** Surface callbacks + Choreographer `postGfxVsync` (1-slot; drops unconsumed beats).
+- **GpuThread:** `GpuBackends.dawn()` + `bindCanvasNativeWindow`, compile/instantiate, `callRunConcurrent`.
+- **Main:** Surface + Choreographer `postGfxVsync` + touch/key → `postGfxPointer` / `postGfxKey`.
 
-On API 30+ the host pins the **peak** display mode for this resolution and `Surface.setFrameRate` at that Hz (H24/H27). API 31+ also `Window.setPreferMinimalPostProcessing`. Logcat tags: `FullscreenSurface` (Choreographer interval histogram every 120 beats) and runtime `GfxHitch` (acquire ns / 60 vs 120 Hz buckets).
+`TMPDIR` is pinned to `cacheDir` so `wasi:filesystem` preopen is app-private. Cleartext is allowed (local HTTP smoke on `127.0.0.1:18765`).

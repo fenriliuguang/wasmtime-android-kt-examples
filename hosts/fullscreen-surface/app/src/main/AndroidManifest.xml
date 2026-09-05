@@ -6,23 +6,13 @@
         android:isGame="true"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:usesCleartextTraffic="true"
         android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+        <!-- One launcher per install. Pick the activity with -Pexample=… -->
         <activity
-            android:name=".MainActivity"
+            android:name="${launcherActivity}"
             android:exported="true"
-            android:label="@string/activity_cube"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:screenOrientation="unspecified"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".Border2dActivity"
-            android:exported="true"
-            android:label="@string/activity_border_2d"
+            android:label="${launcherLabel}"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="unspecified"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen">

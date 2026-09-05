@@ -1,0 +1,19 @@
+package wasi:filesystem@0.3.0;
+
+interface types {
+  enum error-code {
+    unknown,
+    access,
+  }
+
+  resource descriptor {
+    write-via-stream: func(data: stream<u8>, offset: u64) -> future<result<_, error-code>>;
+    read-via-stream: func(offset: u64) -> tuple<stream<u8>, future<result<_, error-code>>>;
+    open-at: func(path: string) -> result<descriptor, error-code>;
+  }
+}
+
+interface preopens {
+  use types.{descriptor};
+  get-directories: func() -> list<tuple<descriptor, string>>;
+}

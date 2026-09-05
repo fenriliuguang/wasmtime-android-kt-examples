@@ -1,0 +1,12 @@
+package example:http-tcp@0.1.2;
+
+world guest {
+  import wasi:cli/stdout@0.3.0;
+  import wasi:filesystem/types@0.3.0;
+  import wasi:filesystem/preopens@0.3.0;
+  import wasi:sockets/tcp@0.3.0;
+  import wasi:sockets/tcp-create-socket@0.3.0;
+  import wasi:http/types@0.3.0;
+  import wasi:http/client@0.3.0;
+  export run: async func() -> u32;
+}
