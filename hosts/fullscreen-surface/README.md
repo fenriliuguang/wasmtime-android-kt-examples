@@ -1,6 +1,6 @@
 # fullscreen-surface
 
-Fullscreen `SurfaceView` host. Consumes **Maven** `android-webgpu:0.1.2` (Dawn NativeGpu packed in the AAR). One guest wasm + one launcher per install.
+Fullscreen `SurfaceView` host. Consumes **Maven snapshots** `android-webgpu:0.1.3-SNAPSHOT` (Dawn NativeGpu packed in the AAR). One guest wasm + one launcher per install.
 
 ## Run
 

@@ -1,6 +1,6 @@
 /// Outbound TCP loopback echo, then wasi:http client.send GET to 127.0.0.1:18765.
-/// HTTPS / TLS is a named leftover (send → unknown). Product linker omits
-/// [constructor]request; this guest needs Linker.createWithFixtureConstructors.
+/// HTTPS / TLS leftover: send → TLS-protocol-error (guest returns 22). Product linker
+/// omits [constructor]request; this guest needs Linker.createWithFixtureConstructors.
 /// Return: 4 = HTTP body 4 bytes after TCP echo; 2–7 TCP fail; 21+ HTTP fail.
 
 pub async fn run(background_group : @async-core.TaskGroup[Unit]) -> UInt {

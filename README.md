@@ -1,11 +1,16 @@
 # wasmtime-android-kt-examples
 
-Out-of-tree **scriptable** demos for [wasmtime-android-kt](https://github.com/fenriliuguang/wasmtime-android-kt) **0.1.2**. This is the P010-DEMO linked example repo, not a product. `:smoke-app` in the runtime stays instruments.
+Out-of-tree **scriptable** demos for [wasmtime-android-kt](https://github.com/fenriliuguang/wasmtime-android-kt) **0.1.3-SNAPSHOT**. This is the P010-DEMO linked example repo, not a product. `:smoke-app` in the runtime stays instruments.
 
-Hosts consume Maven Central (no local `includeBuild`):
+Hosts consume the Central Portal snapshots repo (no local `includeBuild`):
 
 ```kotlin
-implementation("io.github.fenriliuguang.wasmtime.android:android-webgpu:0.1.2")
+repositories {
+    google()
+    mavenCentral()
+    maven("https://central.sonatype.com/repository/maven-snapshots/")
+}
+implementation("io.github.fenriliuguang.wasmtime.android:android-webgpu:0.1.3-SNAPSHOT")
 ```
 
 Plan / playbook: [`docs/012-examples-plan.md`](docs/012-examples-plan.md), [`docs/012-examples-playbook.md`](docs/012-examples-playbook.md).
@@ -14,12 +19,12 @@ Plan / playbook: [`docs/012-examples-plan.md`](docs/012-examples-plan.md), [`doc
 
 ```
 hosts/fullscreen-surface   Surface host; one launcher per -Pexample
-guests/kit                 0.1.2 product-world MoonBit scenarios
+guests/kit                 product-world MoonBit scenarios
 guests/http-tcp            HTTP GET (fixture request ctor) + TCP
 guests/rotating-cube       original present demo
 guests/boundary-2d         original 2D demo
 scripts/                   build-example / play-example
-docs/                      0.1.2 plan + playbook
+docs/                      0.1.2 plan + playbook (consume 0.1.3-SNAPSHOT)
 ```
 
 ## One example per install

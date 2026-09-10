@@ -1,8 +1,22 @@
 package wasi:sockets@0.3.0;
 
 interface tcp {
-  enum error-code {
-    unknown,
+  variant error-code {
+    access-denied,
+    not-supported,
+    invalid-argument,
+    out-of-memory,
+    timeout,
+    invalid-state,
+    address-not-bindable,
+    address-in-use,
+    remote-unreachable,
+    connection-refused,
+    connection-broken,
+    connection-reset,
+    connection-aborted,
+    datagram-too-large,
+    other(option<string>),
   }
 
   type ipv4-address = tuple<u8, u8, u8, u8>;
@@ -17,7 +31,8 @@ interface tcp {
   }
 
   resource tcp-socket {
-    connect: async func(remote-address: ip-socket-address) -> result<_, error-code>;
+    /// Host is a sync WIT func (wasm-tools 1.239 cannot parse import `func async`).
+    connect: func(remote-address: ip-socket-address) -> result<_, error-code>;
     write-via-stream: func(data: stream<u8>) -> future<result<_, error-code>>;
     read-via-stream: func() -> tuple<stream<u8>, future<result<_, error-code>>>;
   }
@@ -26,8 +41,22 @@ interface tcp {
 interface tcp-create-socket {
   use tcp.{tcp-socket};
 
-  enum error-code {
-    unknown,
+  variant error-code {
+    access-denied,
+    not-supported,
+    invalid-argument,
+    out-of-memory,
+    timeout,
+    invalid-state,
+    address-not-bindable,
+    address-in-use,
+    remote-unreachable,
+    connection-refused,
+    connection-broken,
+    connection-reset,
+    connection-aborted,
+    datagram-too-large,
+    other(option<string>),
   }
 
   enum ip-address-family {

@@ -1,4 +1,4 @@
-package example:http-tcp@0.1.2;
+package example:http-tcp@0.1.3;
 
 world guest {
   import wasi:cli/stdout@0.3.0;

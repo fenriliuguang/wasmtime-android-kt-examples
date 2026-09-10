@@ -1,12 +1,12 @@
 # 0.1.2 示例仓推进计划
 
-本仓是 [wasmtime-android-kt](https://github.com/fenriliuguang/wasmtime-android-kt) 的**仓外脚本化示例**，不是正式产品。目标：第三方只吃 Maven `android-webgpu:0.1.2`，用 fullscreen host 跑一组可脚本化 guest。
+本仓是 [wasmtime-android-kt](https://github.com/fenriliuguang/wasmtime-android-kt) 的**仓外脚本化示例**，不是正式产品。目标：第三方只吃 Maven snapshots `android-webgpu:0.1.3-SNAPSHOT`，用 fullscreen host 跑一组可脚本化 guest。
 
 ## 立刻（已做）
 
 1. Host 去掉 `includeBuild` 本地 runtime，依赖
 
-   `io.github.fenriliuguang.wasmtime.android:android-webgpu:0.1.2`
+   `io.github.fenriliuguang.wasmtime.android:android-webgpu:0.1.3-SNAPSHOT`
 
 2. 每个例子独立 wasm；绑定只生成一次（`guests/kit` 产品 world；`guests/http-tcp` 另生成，因为要 import `[constructor]request`）。
 3. `-Pexample=…` 一次只装一个 launcher / 一个 `applicationId`，不在同一次安装里塞全部例子。
@@ -40,7 +40,7 @@ https / TLS 是 named leftover：把 authority 改成 `host:443` 时 `send` → 
 ```
 guests/kit/           产品 world + 6 个 scenario run（compute/texture/pointer/cli/fs/tcp）
 guests/http-tcp/      HTTP ctor + sockets（独立绑定）
-hosts/fullscreen-surface/   唯一 0.1.2 consume host
+hosts/fullscreen-surface/   唯一 0.1.3-SNAPSHOT consume host
 scripts/build-example.sh    guest + 单例 APK
 scripts/play-example.sh     am start + EXAMPLE_OK
 docs/012-examples-playbook.md

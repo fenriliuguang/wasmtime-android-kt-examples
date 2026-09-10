@@ -1,6 +1,6 @@
 # Hosts
 
-Android shells that load `assets/guest.wasm` and drive the **Maven** 0.1.2 runtime:
+Android shells that load `assets/guest.wasm` and drive the **Maven snapshots** `0.1.3-SNAPSHOT` runtime:
 
 1. `Engine.create` → `Component.compile` → `Linker.create` (product linker; http-tcp uses fixture ctors)
 2. `Store.create` + `setWebGpuBackend(GpuBackends.dawn())` + `Store.bindCanvasNativeWindow`
@@ -12,5 +12,5 @@ Swap the packed guest with `-Pexample=` (see [`docs/012-examples-playbook.md`](.
 
 | Host | Notes |
 |------|--------|
-| [fullscreen-surface](fullscreen-surface) | 0.1.2 consume host. One launcher per `-Pexample` |
+| [fullscreen-surface](fullscreen-surface) | 0.1.3-SNAPSHOT consume host. One launcher per `-Pexample` |
 | [native-webgpu](native-webgpu) | Pure `androidx.webgpu` JNI leak repro (no Wasmtime) |

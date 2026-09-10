@@ -1,12 +1,12 @@
 # 0.1.2 示例 playbook（脚本化）
 
-第三方 consume 钉：Maven Central
+第三方 consume 钉：Central Portal snapshots（当前 GAV **0.1.3-SNAPSHOT**；不在 `mavenCentral()`）
 
 ```
-io.github.fenriliuguang.wasmtime.android:android-webgpu:0.1.2
+io.github.fenriliuguang.wasmtime.android:android-webgpu:0.1.3-SNAPSHOT
 ```
 
-Host：`hosts/fullscreen-surface`。一次只装一个例子（不同 `applicationId`）。不要 `includeBuild` 本地 runtime。
+Host：`hosts/fullscreen-surface`。一次只装一个例子（不同 `applicationId`）。不要 `includeBuild` 本地 runtime。`settings.gradle.kts` 必须加 `maven("https://central.sonatype.com/repository/maven-snapshots/")`。
 
 ## 0. 机器
 
@@ -105,6 +105,6 @@ adb logcat -s ExampleCompute:I ExampleCompute:E
 | pointer `code=2` | surface 宽高仍是 0：`bindCanvasNativeWindow` 没发生 |
 | pointer `code=5/6` | 没吃到 auto pointer（host 没 `postGfxPointer`） |
 | fs `code=3` | `open-at("..")` 没返回 access |
-| http-tcp `code=22` | `send` unknown：TLS leftover 或 authority 空/非 IPv4 `host:port` |
+| http-tcp `code=22` | `send` leftover：TLS / authority 空 / 非 IPv4 `host:port`（0.1.3 为 `TLS-protocol-error`，不再是 `unknown`） |
 | http-tcp `code=21` | `set-authority` 失败 |
 | 一直无 `EXAMPLE_OK` | GpuThread 崩了 / run 堵在 `on-frame`（这个 smoke 不该堵；pointer 若没 auto-post 会堵在 `stream.read`） |

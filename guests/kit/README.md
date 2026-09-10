@@ -1,4 +1,4 @@
-# kit guests (0.1.2 product world)
+# kit guests (0.1.3 product world)
 
 One MoonBit module (`example/kit`). Bindings generated once from **product-complete WIT** (full `wasi:webgpu@0.3.0-rc.2`, full `wasi-gfx:surface@0.2.0` pin, clocks, cli stdout, filesystem preopen/`open-at`, sockets TCP). Each scenario is a different `run` compiled to a different wasm.
 

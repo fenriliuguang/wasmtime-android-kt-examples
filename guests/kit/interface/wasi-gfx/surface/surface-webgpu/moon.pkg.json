@@ -3,6 +3,5 @@
   "import": [
     { "path" : "example/kit/interface/wasi-gfx/surface/surface", "alias" : "surface" },
     { "path" : "example/kit/interface/wasi/webgpu/webgpu", "alias" : "webgpu" }
-  ],
-  "supported-targets": "+wasm"
+  ]
 }

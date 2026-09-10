@@ -39,12 +39,12 @@ extern "wasm" fn mbt_ffi_free(position : Int) =
 #|(func (param i32) local.get 0 call $moonbit.decref)
 
 #doc(hidden)
-pub fn wasmExportRun() -> Int {
-      @guest.wasmExportRun()
+pub fn wasmExportAsyncRun(event_raw : Int, waitable : Int, code : Int) -> Int {
+      @guest.wasmExportAsyncRun(event_raw, waitable, code)
 }
 
 #doc(hidden)
-pub fn wasmExportAsyncRun(event_raw : Int, waitable : Int, code : Int) -> Int {
-      @guest.wasmExportAsyncRun(event_raw, waitable, code)
+pub fn wasmExportRun() -> Int {
+      @guest.wasmExportRun()
 }
 

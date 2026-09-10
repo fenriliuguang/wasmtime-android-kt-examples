@@ -431,7 +431,7 @@ fn wasmImportWasiFilesystemTypes030MethodDescriptorWriteViaStreamFuture1CancelRe
 fn wasmImportWasiFilesystemTypes030MethodDescriptorWriteViaStreamFuture1DropReadable(handle : Int) = "wasi:filesystem/types@0.3.0" "[future-drop-readable-1][method]descriptor.write-via-stream"
 
 fn wasmWasiFilesystemTypes030MethodDescriptorWriteViaStreamFuture1Malloc(length : Int) -> Int {
-      let ptr = mbt_ffi_malloc(2 * length)
+      let ptr = mbt_ffi_malloc(20 * length)
       ptr
 }
 
@@ -440,24 +440,252 @@ ptr : Int,
 start : Int,
 length : Int,
 ) -> Unit {
-      ignore((ptr, start, length))
+
+      for i in start..<(start + length) {
+            let elem_ptr = ptr + i * 20
+
+            match (mbt_ffi_load8_u((elem_ptr) + 0)) {
+                  0 => ()
+                  1 => {
+
+                        match (mbt_ffi_load8_u((elem_ptr) + 4)) {
+                              0 => ()
+                              1 => ()
+                              2 => ()
+                              3 => ()
+                              4 => ()
+                              5 => ()
+                              6 => ()
+                              7 => ()
+                              8 => ()
+                              9 => ()
+                              10 => ()
+                              11 => ()
+                              12 => ()
+                              13 => ()
+                              14 => ()
+                              15 => ()
+                              16 => ()
+                              17 => ()
+                              18 => ()
+                              19 => ()
+                              20 => ()
+                              21 => ()
+                              22 => ()
+                              23 => ()
+                              24 => ()
+                              25 => ()
+                              26 => ()
+                              27 => ()
+                              28 => ()
+                              29 => ()
+                              30 => ()
+                              31 => ()
+                              32 => ()
+                              33 => ()
+                              34 => ()
+                              35 => ()
+                              36 => {
+
+                                    match (mbt_ffi_load8_u((elem_ptr) + 8)) {
+                                          0 => ()
+                                          1 => {
+                                                mbt_ffi_free(mbt_ffi_load32((elem_ptr) + 12))
+
+                                          }
+                                          _ => panic()
+                                    }
+
+                              }
+                              _ => panic()
+                        }
+
+                  }
+                  _ => panic()
+            }
+
+      }
+
 }
 
 fn wasmWasiFilesystemTypes030MethodDescriptorWriteViaStreamFuture1Lift(ptr : Int) -> Result[Unit, ErrorCode] {
 
-      let lifted = match (mbt_ffi_load8_u((ptr) + 0)) {
+      let lifted1 = match (mbt_ffi_load8_u((ptr) + 0)) {
             0 => {
 
                   Result::Ok(())
             }
             1 => {
 
-                  Result::Err(ErrorCode::from(mbt_ffi_load8_u((ptr) + 1)))
+                  let lifted0 = match (mbt_ffi_load8_u((ptr) + 4)) {
+                        0 => {
+
+                              ErrorCode::Access
+                        }
+                        1 => {
+
+                              ErrorCode::Already
+                        }
+                        2 => {
+
+                              ErrorCode::BadDescriptor
+                        }
+                        3 => {
+
+                              ErrorCode::Busy
+                        }
+                        4 => {
+
+                              ErrorCode::Deadlock
+                        }
+                        5 => {
+
+                              ErrorCode::Quota
+                        }
+                        6 => {
+
+                              ErrorCode::Exist
+                        }
+                        7 => {
+
+                              ErrorCode::FileTooLarge
+                        }
+                        8 => {
+
+                              ErrorCode::IllegalByteSequence
+                        }
+                        9 => {
+
+                              ErrorCode::InProgress
+                        }
+                        10 => {
+
+                              ErrorCode::Interrupted
+                        }
+                        11 => {
+
+                              ErrorCode::Invalid
+                        }
+                        12 => {
+
+                              ErrorCode::Io
+                        }
+                        13 => {
+
+                              ErrorCode::IsDirectory
+                        }
+                        14 => {
+
+                              ErrorCode::Loop
+                        }
+                        15 => {
+
+                              ErrorCode::TooManyLinks
+                        }
+                        16 => {
+
+                              ErrorCode::MessageSize
+                        }
+                        17 => {
+
+                              ErrorCode::NameTooLong
+                        }
+                        18 => {
+
+                              ErrorCode::NoDevice
+                        }
+                        19 => {
+
+                              ErrorCode::NoEntry
+                        }
+                        20 => {
+
+                              ErrorCode::NoLock
+                        }
+                        21 => {
+
+                              ErrorCode::InsufficientMemory
+                        }
+                        22 => {
+
+                              ErrorCode::InsufficientSpace
+                        }
+                        23 => {
+
+                              ErrorCode::NotDirectory
+                        }
+                        24 => {
+
+                              ErrorCode::NotEmpty
+                        }
+                        25 => {
+
+                              ErrorCode::NotRecoverable
+                        }
+                        26 => {
+
+                              ErrorCode::Unsupported
+                        }
+                        27 => {
+
+                              ErrorCode::NoTty
+                        }
+                        28 => {
+
+                              ErrorCode::NoSuchDevice
+                        }
+                        29 => {
+
+                              ErrorCode::Overflow
+                        }
+                        30 => {
+
+                              ErrorCode::NotPermitted
+                        }
+                        31 => {
+
+                              ErrorCode::Pipe
+                        }
+                        32 => {
+
+                              ErrorCode::ReadOnly
+                        }
+                        33 => {
+
+                              ErrorCode::InvalidSeek
+                        }
+                        34 => {
+
+                              ErrorCode::TextFileBusy
+                        }
+                        35 => {
+
+                              ErrorCode::CrossDevice
+                        }
+                        36 => {
+
+                              let lifted : String? = match mbt_ffi_load8_u((ptr) + 8) {
+                                    0 => Option::None
+                                    1 => {
+
+                                          let result = mbt_ffi_ptr2str(mbt_ffi_load32((ptr) + 12), mbt_ffi_load32((ptr) + 16))
+
+                                          Option::Some(result)
+                                    }
+                                    _ => panic()
+                              }
+
+                              ErrorCode::Other(lifted)
+                        }
+                        _ => panic()
+                  }
+
+                  Result::Err(lifted0)
             }
             _ => panic()
       }
 
-      lifted
+      lifted1
 }
 
 priv struct WasmWasiFilesystemTypes030MethodDescriptorWriteViaStreamFuture1FutureSource {
@@ -839,7 +1067,7 @@ fn wasmImportWasiFilesystemTypes030MethodDescriptorReadViaStreamFuture1CancelRea
 fn wasmImportWasiFilesystemTypes030MethodDescriptorReadViaStreamFuture1DropReadable(handle : Int) = "wasi:filesystem/types@0.3.0" "[future-drop-readable-1][method]descriptor.read-via-stream"
 
 fn wasmWasiFilesystemTypes030MethodDescriptorReadViaStreamFuture1Malloc(length : Int) -> Int {
-      let ptr = mbt_ffi_malloc(2 * length)
+      let ptr = mbt_ffi_malloc(20 * length)
       ptr
 }
 
@@ -848,24 +1076,252 @@ ptr : Int,
 start : Int,
 length : Int,
 ) -> Unit {
-      ignore((ptr, start, length))
+
+      for i in start..<(start + length) {
+            let elem_ptr = ptr + i * 20
+
+            match (mbt_ffi_load8_u((elem_ptr) + 0)) {
+                  0 => ()
+                  1 => {
+
+                        match (mbt_ffi_load8_u((elem_ptr) + 4)) {
+                              0 => ()
+                              1 => ()
+                              2 => ()
+                              3 => ()
+                              4 => ()
+                              5 => ()
+                              6 => ()
+                              7 => ()
+                              8 => ()
+                              9 => ()
+                              10 => ()
+                              11 => ()
+                              12 => ()
+                              13 => ()
+                              14 => ()
+                              15 => ()
+                              16 => ()
+                              17 => ()
+                              18 => ()
+                              19 => ()
+                              20 => ()
+                              21 => ()
+                              22 => ()
+                              23 => ()
+                              24 => ()
+                              25 => ()
+                              26 => ()
+                              27 => ()
+                              28 => ()
+                              29 => ()
+                              30 => ()
+                              31 => ()
+                              32 => ()
+                              33 => ()
+                              34 => ()
+                              35 => ()
+                              36 => {
+
+                                    match (mbt_ffi_load8_u((elem_ptr) + 8)) {
+                                          0 => ()
+                                          1 => {
+                                                mbt_ffi_free(mbt_ffi_load32((elem_ptr) + 12))
+
+                                          }
+                                          _ => panic()
+                                    }
+
+                              }
+                              _ => panic()
+                        }
+
+                  }
+                  _ => panic()
+            }
+
+      }
+
 }
 
 fn wasmWasiFilesystemTypes030MethodDescriptorReadViaStreamFuture1Lift(ptr : Int) -> Result[Unit, ErrorCode] {
 
-      let lifted = match (mbt_ffi_load8_u((ptr) + 0)) {
+      let lifted1 = match (mbt_ffi_load8_u((ptr) + 0)) {
             0 => {
 
                   Result::Ok(())
             }
             1 => {
 
-                  Result::Err(ErrorCode::from(mbt_ffi_load8_u((ptr) + 1)))
+                  let lifted0 = match (mbt_ffi_load8_u((ptr) + 4)) {
+                        0 => {
+
+                              ErrorCode::Access
+                        }
+                        1 => {
+
+                              ErrorCode::Already
+                        }
+                        2 => {
+
+                              ErrorCode::BadDescriptor
+                        }
+                        3 => {
+
+                              ErrorCode::Busy
+                        }
+                        4 => {
+
+                              ErrorCode::Deadlock
+                        }
+                        5 => {
+
+                              ErrorCode::Quota
+                        }
+                        6 => {
+
+                              ErrorCode::Exist
+                        }
+                        7 => {
+
+                              ErrorCode::FileTooLarge
+                        }
+                        8 => {
+
+                              ErrorCode::IllegalByteSequence
+                        }
+                        9 => {
+
+                              ErrorCode::InProgress
+                        }
+                        10 => {
+
+                              ErrorCode::Interrupted
+                        }
+                        11 => {
+
+                              ErrorCode::Invalid
+                        }
+                        12 => {
+
+                              ErrorCode::Io
+                        }
+                        13 => {
+
+                              ErrorCode::IsDirectory
+                        }
+                        14 => {
+
+                              ErrorCode::Loop
+                        }
+                        15 => {
+
+                              ErrorCode::TooManyLinks
+                        }
+                        16 => {
+
+                              ErrorCode::MessageSize
+                        }
+                        17 => {
+
+                              ErrorCode::NameTooLong
+                        }
+                        18 => {
+
+                              ErrorCode::NoDevice
+                        }
+                        19 => {
+
+                              ErrorCode::NoEntry
+                        }
+                        20 => {
+
+                              ErrorCode::NoLock
+                        }
+                        21 => {
+
+                              ErrorCode::InsufficientMemory
+                        }
+                        22 => {
+
+                              ErrorCode::InsufficientSpace
+                        }
+                        23 => {
+
+                              ErrorCode::NotDirectory
+                        }
+                        24 => {
+
+                              ErrorCode::NotEmpty
+                        }
+                        25 => {
+
+                              ErrorCode::NotRecoverable
+                        }
+                        26 => {
+
+                              ErrorCode::Unsupported
+                        }
+                        27 => {
+
+                              ErrorCode::NoTty
+                        }
+                        28 => {
+
+                              ErrorCode::NoSuchDevice
+                        }
+                        29 => {
+
+                              ErrorCode::Overflow
+                        }
+                        30 => {
+
+                              ErrorCode::NotPermitted
+                        }
+                        31 => {
+
+                              ErrorCode::Pipe
+                        }
+                        32 => {
+
+                              ErrorCode::ReadOnly
+                        }
+                        33 => {
+
+                              ErrorCode::InvalidSeek
+                        }
+                        34 => {
+
+                              ErrorCode::TextFileBusy
+                        }
+                        35 => {
+
+                              ErrorCode::CrossDevice
+                        }
+                        36 => {
+
+                              let lifted : String? = match mbt_ffi_load8_u((ptr) + 8) {
+                                    0 => Option::None
+                                    1 => {
+
+                                          let result = mbt_ffi_ptr2str(mbt_ffi_load32((ptr) + 12), mbt_ffi_load32((ptr) + 16))
+
+                                          Option::Some(result)
+                                    }
+                                    _ => panic()
+                              }
+
+                              ErrorCode::Other(lifted)
+                        }
+                        _ => panic()
+                  }
+
+                  Result::Err(lifted0)
             }
             _ => panic()
       }
 
-      lifted
+      lifted1
 }
 
 priv struct WasmWasiFilesystemTypes030MethodDescriptorReadViaStreamFuture1FutureSource {
@@ -1032,16 +1488,32 @@ fn wasmWasiFilesystemTypes030MethodDescriptorReadViaStreamFuture1FutureLift(hand
 fn wasmImportMethodDescriptorOpenAt(p0 : Int, p1 : Int, p2 : Int, p3 : Int)  = "wasi:filesystem/types@0.3.0" "[method]descriptor.open-at"
 
 ///|
+extern "wasm" fn mbt_ffi_load8_u(offset : Int) -> Int =
+#|(func (param i32) (result i32) local.get 0 i32.load8_u)
+
+///|
 extern "wasm" fn mbt_ffi_store8(offset : Int, value : Int) =
 #|(func (param i32) (param i32) local.get 0 local.get 1 i32.store8)
 
 ///|
-extern "wasm" fn mbt_ffi_free(position : Int) =
-#|(func (param i32) local.get 0 call $moonbit.decref)
+extern "wasm" fn mbt_ffi_store32(offset : Int, value : Int) =
+#|(func (param i32) (param i32) local.get 0 local.get 1 i32.store)
+
+///|
+#owned(str)
+extern "wasm" fn mbt_ffi_str2ptr(str : String) -> Int =
+#|(func (param i32) (result i32) local.get 0)
 
 ///|
 extern "wasm" fn mbt_ffi_load32(offset : Int) -> Int =
 #|(func (param i32) (result i32) local.get 0 i32.load)
+
+///|
+extern "wasm" fn mbt_ffi_ptr2str(ptr : Int, len : Int) -> String =
+#|(func (param i32) (param i32) (result i32)
+#| local.get 0
+#| local.get 1 call $moonbit.init_array16
+#| local.get 0)
 
 ///|
 extern "wasm" fn mbt_ffi_ptr2bytes(ptr : Int, len : Int) -> FixedArray[Byte] =
@@ -1058,11 +1530,6 @@ extern "wasm" fn mbt_ffi_malloc(size : Int) -> Int =
 #| local.get 1)
 
 ///|
-#owned(str)
-extern "wasm" fn mbt_ffi_str2ptr(str : String) -> Int =
-#|(func (param i32) (result i32) local.get 0)
-
-///|
-extern "wasm" fn mbt_ffi_load8_u(offset : Int) -> Int =
-#|(func (param i32) (result i32) local.get 0 i32.load8_u)
+extern "wasm" fn mbt_ffi_free(position : Int) =
+#|(func (param i32) local.get 0 call $moonbit.decref)
 
